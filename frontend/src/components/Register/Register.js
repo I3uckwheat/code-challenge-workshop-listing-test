@@ -9,12 +9,40 @@ class Register extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      error: ""
+      error: "",
+      registerForm: {
+        name: "",
+        email: "",
+        password: ""
+      }
     };
+
+    // To allow focusing on password input
+    this.passwordInput = React.createRef();
+
     this.submitHandler = this.submitHandler.bind(this);
+    this.formEntryUpdateHandler = this.formEntryUpdateHandler.bind(this);
+    this.clearPassword = this.clearPassword.bind(this);
   }
 
-  componentWillMount() {
+  formEntryUpdateHandler(ev) {
+    const name = ev.target.name;
+    const value = ev.target.value;
+    this.setState((state) => {
+      return {...state, registerForm: {...state.registerForm, [name]: value}};
+    });
+  }
+
+  clearPassword() {
+    this.setState(state => (
+      {
+        ...state, 
+        registerForm: {
+          ...state.registerForm,
+          password: ""
+        }
+      }
+    ));
   }
 
   submitHandler(ev) {
@@ -22,14 +50,11 @@ class Register extends Component {
     console.log('Submitting form ...');
 
     // @TODO-code-challenge: Core Functionality: As a User, I can sign up using my email & password
-    // Update fields based on user input
-    let name = "";
-    let email = "";
-    let password = "";
+    const {name, email, password} = this.state.registerForm;
 
     if (password.length < 8) {
-      this.passwordInput.value = "";
-      this.passwordInput.focus();
+      this.clearPassword();
+      this.passwordInput.current.focus();
       return;
     }
 
@@ -69,15 +94,15 @@ class Register extends Component {
             {/* // @TODO-code-challenge: Core Functionality: As a User, I can sign up using my email & password */}
             <div className="field">
               <label htmlFor="name">Names: </label>
-              <input type="text" name="name" required placeholder="name"/>
+              <input type="text" name="name" required placeholder="name" onChange={this.formEntryUpdateHandler} />
             </div>
             <div className="field">
               <label htmlFor="email">E-mail: </label>
-              <input type="email" name="email" required placeholder="valid e-mail"/>
+              <input type="email" name="email" required placeholder="valid e-mail" onChange={this.formEntryUpdateHandler} />
             </div>
             <div className="field">
               <label htmlFor="password">Password: </label>
-              <input type="password" name="password" required placeholder="( at lease 8 characters )"/>
+              <input type="password" name="password" required placeholder="( at lease 8 characters )" ref={this.passwordInput} onChange={this.formEntryUpdateHandler} />
             </div>
             <div className="field">
               <button type="submit">Sign-up</button>
