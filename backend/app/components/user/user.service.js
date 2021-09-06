@@ -16,6 +16,9 @@ exports.generateToken = (userObj) => {
 };
 
 exports.add = async (userObj) => {
+  const existingUser = await User.findOne({email: userObj.email});
+  if(existingUser) return false; 
+
   let user = new User();
   user.name = userObj.name;
   user.email = userObj.email;
