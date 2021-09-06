@@ -45,11 +45,10 @@ class Register extends Component {
     ));
   }
 
-  submitHandler(ev) {
+  async submitHandler(ev) {
     ev.preventDefault();
     console.log('Submitting form ...');
 
-    // @TODO-code-challenge: Core Functionality: As a User, I can sign up using my email & password
     const {name, email, password} = this.state.registerForm;
 
     if (password.length < 8) {
@@ -58,32 +57,37 @@ class Register extends Component {
       return;
     }
 
-    let payload = JSON.stringify({ name: name, email: email, password: password });
-    fetch ('http://localhost:3000/api/v1/users/sign-up/', {
-      headers: {
-      'Content-Type': 'application/json'
-      },
-      method: 'POST',
-      body: payload
-    })
-    .then ( (resp) => {
+    const payload = JSON.stringify({ name: name, email: email, password: password });
+    try {
+      const resp = await fetch ('http://localhost:3000/api/v1/users/sign-up/', {
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        method: 'POST',
+        body: payload
+      });
+
       if (resp.status === 200) {
-        resp.json().then( (data) => {
+        try {
+          const data = await resp.json();
           console.log('data of register in :');
           console.log(data);
           this.props.history.push('/signin');
-        }).catch( (err) => {
+        } catch(e) {
           console.log('problem in jsonifying register response')
-        });
+        }
       } else {
         console.error('Not authorized !');
         this.setState({
           error: "Server could not register the user with the provided info"
         });
       }
-    } )
-    .catch ( (err) => { console.error('Error fetching ...'); } );
-
+    } catch(e) {
+      console.error('Error fetching ...'); 
+      this.setState({
+        error: "There was an error signing up"
+      })
+    }
   }
 
   render() {
@@ -91,7 +95,6 @@ class Register extends Component {
       <div className="Register">
         <h1>Register</h1>
         <form onSubmit={this.submitHandler}>
-            {/* // @TODO-code-challenge: Core Functionality: As a User, I can sign up using my email & password */}
             <div className="field">
               <label htmlFor="name">Names: </label>
               <input type="text" name="name" required placeholder="name" onChange={this.formEntryUpdateHandler} />
