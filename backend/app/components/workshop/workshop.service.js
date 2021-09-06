@@ -46,19 +46,20 @@ exports.getNearby = async (id, longitude, latitude) => {
     let dislikedWorkshops = await userService.getDislikedWorkshops(id);
     let specialWorkshops = [...likedWorkshops, ...dislikedWorkshops];
     console.log(specialWorkshops);
+
     // If Liked || if Disliked less than two hours don't show
-    for (let i = 0 ; i < workshops.length ; i++) {
-      for (let sp of specialWorkshops) {
-        if (workshops[i]._id.toString() === sp.workshopId.toString()) {
-          if (sp.likedTime) {
-            // TODO-code-challenge: Secondary Functionality: As a User, I can like a workshop, so it can be added to my preferred workshops
+    return workshops.map(workshop => {
+      for (let specialWorkshop of specialWorkshops) {
+        if (workshop._id.equals(specialWorkshop._id)) {
+          if (specialWorkshop.likedTime) {
+            return {...workshop.toObject(), preferred: true};
           } else if (sp.dislikedTime) {
-            // TODO-code-challenge: Bonus: As a User, I can dislike a workshop, so it won’t be displayed within “Nearby WorkShops” list during the next 2 hours
+          //   // TODO-code-challenge: Bonus: As a User, I can dislike a workshop, so it won’t be displayed within “Nearby WorkShops” list during the next 2 hours
           }
         }
       }
-    }
-    return workshops;
+      return workshop;
+    });
   } catch (err) {
     winston.error('Workshop service Error: could not get nearby workshops');
     winston.debug(err);
