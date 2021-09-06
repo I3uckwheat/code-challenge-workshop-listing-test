@@ -66,11 +66,6 @@ class WorkshopDisplay extends Component {
     .then ( (data) => {
       console.log(data);
       this.setState({data});
-      // data is a list of workshops
-      // TODO-code-challenge: Core Functionality: As a User, I can display the list of workshops sorted by distance
-      // this.setState({
-      //   data: <div>List of workshops</div>
-      // })
     })
     .catch( (err) => {
       console.error(err);
