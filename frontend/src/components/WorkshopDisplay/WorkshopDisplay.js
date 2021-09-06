@@ -114,10 +114,12 @@ class WorkshopDisplay extends Component {
         <div>
           { 
             this.state.data.map(workshop => (
+              !workshop.preferred &&
               <WorkshopItem 
                 name={workshop.name}
                 img={workshop.picture}
                 id={workshop._id}
+                preferred={workshop.preferred}
               />
             ))
           }
