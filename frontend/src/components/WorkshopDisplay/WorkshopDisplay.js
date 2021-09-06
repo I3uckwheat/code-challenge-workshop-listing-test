@@ -90,7 +90,7 @@ class WorkshopDisplay extends Component {
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition( (position) => {
           console.log(position.coords.longitude, position.coords.latitude);
-          url = `http://localhost:3000/api/v1/workshops/nearby?x=${position.coords.longitude}&y=${position.coords.longitude}`;
+          url = `http://localhost:3000/api/v1/workshops/nearby?x=${position.coords.longitude}&y=${position.coords.latitude}`;
           this.fetchWorkshops(url);
         }, (err) => {
           console.log('No permission for geolocation.');
