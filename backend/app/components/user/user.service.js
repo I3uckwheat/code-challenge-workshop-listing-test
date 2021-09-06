@@ -55,7 +55,27 @@ exports.getDislikedWorkshops = async (id) => {
 };
 
 exports.likeWorkshop = async (idUser, workshop) => {
-  // TODO-code-challenge: Secondary Functionality: As a User, I can like a workshop, so it can be added to my preferred workshops
+  winston.debug(`User Service : Liking workshop ${workshop.name} by user ${idUser}`);
+
+  try {
+    let user = await User.findById(idUser);
+
+    // Prevent record from being duplicated if already existing on user
+    // Update time if already liked
+    const hasLiked = user.likedWorkshops.find((likedWorkshop) => likedWorkshop._id.equals(workshop._id));
+    if(!hasLiked) {
+      user.likedWorkshops.push(workshop._id);
+    } else {
+      hasLiked.likedTime = new Date();
+    }
+
+    await user.save();
+    return true;
+  } catch (err) {
+    winston.error(`User Service: Error in Liking workshop ${workshop._id} by user ${idUser}`);
+    winston.debug(err);
+    return false;
+  }
 };
 
 exports.unlikeWorkshop = async (idUser, workshop) => {
