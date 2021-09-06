@@ -16,7 +16,10 @@ class Login extends Component {
         password: ""
       }
     };
+
+    // To allow focusing on password input
     this.passwordInput = React.createRef();
+
     this.submitHandler = this.submitHandler.bind(this);
     this.formEntryUpdateHandler = this.formEntryUpdateHandler.bind(this);
   }
@@ -53,11 +56,9 @@ class Login extends Component {
     });
   }
 
-  submitHandler(ev) {
+  async submitHandler(ev) {
     ev.preventDefault();
 
-    // @TODO-code-challenge: Core Functionality: As a User, I can sign in using my email & password
-    // Update fields based on user input
     const {email, password} = this.state.loginForm;
 
     if (password.length < 8) {
@@ -66,17 +67,19 @@ class Login extends Component {
       return;
     }
 
-    let payload = JSON.stringify({ email: email, password: password });
-    fetch ('http://localhost:3000/api/v1/users/sign-in/', {
-      headers: {
-      'Content-Type': 'application/json'
-      },
-      method: 'POST',
-      body: payload
-    })
-    .then ( (resp) => {
+    try {
+      const payload = JSON.stringify({ email: email, password: password });
+      const resp = await fetch ('http://localhost:3000/api/v1/users/sign-in/', {
+        headers: {
+        'Content-Type': 'application/json'
+        },
+        method: 'POST',
+        body: payload
+      })
+
       if (resp.status === 200) {
-        resp.json().then( (data) => {
+        try {
+          const data = await resp.json();
           console.log('data of login in :');
           console.log(data);
           localStorage.setItem('token', data.token);
@@ -85,18 +88,21 @@ class Login extends Component {
             error: ""
           });
           this.props.history.push('/workshops/nearby');
-        }).catch( (err) => {
+        } catch(e) {
           console.log('problem in jsonifying login response');
-        });
+        }
       } else {
         console.error('User with given credentials Not authorized by the server !');
         this.setState({
-          ...this.state,
           error: "Wrong credentials"
         });
       }
-    } )
-    .catch ( (err) => { console.error('Error in Login Fetch ...'); } );
+    } catch(e) {
+      console.error('Error in Login Fetch ...'); 
+      this.setState({
+        error: "There was an error logging in"
+      });
+    }
 
   }
 
@@ -106,7 +112,6 @@ class Login extends Component {
       <div className="Login">
         <h1>Login</h1>
         <form onSubmit={this.submitHandler}>
-            {/* @TODO-code-challenge: Core Functionality: As a User, I can sign in using my email & password */}
             <div className="field">
               <label htmlFor="email">E-mail: </label>
               <input type="email" name="email" required placeholder="valid e-mail" onChange={this.formEntryUpdateHandler} />
