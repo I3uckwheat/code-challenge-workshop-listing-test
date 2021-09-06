@@ -10,9 +10,15 @@ class Login extends Component {
     super(props);
     this.state = {
       logged: false,
-      error: ""
+      error: "",
+      loginForm: {
+        email: "",
+        password: ""
+      }
     };
+    this.passwordInput = React.createRef();
     this.submitHandler = this.submitHandler.bind(this);
+    this.formEntryUpdateHandler = this.formEntryUpdateHandler.bind(this);
   }
 
   componentWillMount() {
@@ -27,17 +33,36 @@ class Login extends Component {
     }
   }
 
+  clearPassword() {
+    this.setState(state => (
+      {
+        ...state, 
+        loginForm: {
+          ...state.loginForm,
+          password: ""
+        }
+      }
+    ));
+  }
+
+  formEntryUpdateHandler(ev) {
+    const name = ev.target.name;
+    const value = ev.target.value;
+    this.setState((state) => {
+      return {...state, loginForm: {...state.loginForm, [name]: value}};
+    });
+  }
+
   submitHandler(ev) {
     ev.preventDefault();
 
     // @TODO-code-challenge: Core Functionality: As a User, I can sign in using my email & password
     // Update fields based on user input
-    let email = "";
-    let password = "";
+    const {email, password} = this.state.loginForm;
 
     if (password.length < 8) {
-      this.passwordInput.value = "";
-      this.passwordInput.focus();
+      this.clearPassword();
+      this.passwordInput.current.focus();
       return;
     }
 
@@ -84,11 +109,11 @@ class Login extends Component {
             {/* @TODO-code-challenge: Core Functionality: As a User, I can sign in using my email & password */}
             <div className="field">
               <label htmlFor="email">E-mail: </label>
-              <input type="email" name="email" required placeholder="valid e-mail"/>
+              <input type="email" name="email" required placeholder="valid e-mail" onChange={this.formEntryUpdateHandler} />
             </div>
             <div className="field">
               <label htmlFor="password">Password: </label>
-              <input type="password" name="password" required placeholder="( at least 8 characters )"/>
+              <input type="password" name="password" required placeholder="( at least 8 characters )" ref={this.passwordInput} onChange={this.formEntryUpdateHandler} />
             </div>
             <div className="field">
               <button type="submit">Sign-in</button>
