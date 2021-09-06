@@ -65,6 +65,7 @@ class WorkshopDisplay extends Component {
     .then ( (resp) =>  resp.json() )
     .then ( (data) => {
       console.log(data);
+      this.setState({data});
       // data is a list of workshops
       // TODO-code-challenge: Core Functionality: As a User, I can display the list of workshops sorted by distance
       // this.setState({
@@ -116,7 +117,15 @@ class WorkshopDisplay extends Component {
           <h1 className="title">Nearby Workshops</h1>
         </div>
         <div>
-          { this.state.data  }
+          { 
+            this.state.data.map(workshop => (
+              <WorkshopItem 
+                name={workshop.name}
+                img={workshop.picture}
+                id={workshop._id}
+              />
+            ))
+          }
         </div>
       </div>
     );
