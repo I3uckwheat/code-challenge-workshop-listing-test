@@ -9,7 +9,6 @@ class WorkshopDisplay extends Component {
     console.log('Constructing WorkshopDisplay ...');
     super(props);
 
-    // TODO-code-challenge: Bonus: As a User, I can display the list of preferred workshops
     this.state = {
       data: []
     };
@@ -79,6 +78,7 @@ class WorkshopDisplay extends Component {
 
     if (mode === '/workshops/nearby') {
       console.log('nearby');
+      // Emptying data to prevent flashing
       this.setState({mode: "nearby", data: []});
 
       if (navigator.geolocation) {
@@ -98,6 +98,7 @@ class WorkshopDisplay extends Component {
       }
 
     } else if (mode === '/workshops/preferred') {
+      // Emptying data to prevent flashing
       this.setState({mode: "preferred", data: []});
 
       if (navigator.geolocation) {
@@ -124,7 +125,7 @@ class WorkshopDisplay extends Component {
     return (
       <div className="WorkshopDisplay">
         <div>
-          <h1 className="title">{this.state.mode === "nearby" ? "Nearby Workshops" : "Preferred Workshops"}</h1>
+          <h1 className="title">{this.pathNameToTitle()} Workshops</h1>
         </div>
         <div>
           { 
