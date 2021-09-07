@@ -99,7 +99,21 @@ class WorkshopDisplay extends Component {
       }
 
     } else if (mode === '/workshops/preferred') {
-      // TODO-code-challenge: Bonus: As a User, I can display the list of preferred workshops
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition( (position) => {
+          console.log(position.coords.longitude, position.coords.latitude);
+          url = `http://localhost:3000/api/v1/workshops/preferred?x=${position.coords.longitude}&y=${position.coords.latitude}`;
+          this.fetchWorkshops(url);
+        }, (err) => {
+          console.log('No permission for geolocation.');
+          url = `http://localhost:3000/api/v1/workshops/preferred`;
+          this.fetchWorkshops(url);
+        });
+      } else {
+        console.log("Geolocation is not supported.");
+        url = `http://localhost:3000/api/v1/workshops/preferred`;
+        this.fetchWorkshops(url);
+      }
     } else {
       this.props.history.push('/workshops/nearby');
     }
