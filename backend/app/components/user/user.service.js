@@ -85,7 +85,7 @@ exports.unlikeWorkshop = async (idUser, workshop) => {
     let user = await User.findById(idUser);
     // check if the workshop is already in the array, if yes update only the time.
     for (let [index, el] of user.likedWorkshops.entries()) {
-      if (el.workshopId.equals(workshop._id)) {
+      if (el._id.equals(workshop._id)) {
         winston.debug('Found Workshop to be removed !');
         user.likedWorkshops.splice(index,1);
         break;
@@ -94,7 +94,7 @@ exports.unlikeWorkshop = async (idUser, workshop) => {
     await user.save();
     return true;
   } catch (err) {
-    winston.error(`User Service: Error in un-liking workshop ${idWorkshop} by user ${idUser}`);
+    winston.error(`User Service: Error in un-liking workshop ${workshop._id} by user ${idUser}`);
     winston.debug(err);
     return false;
   }

@@ -45,7 +45,21 @@ class WorkshopItem extends Component {
   }
 
   removeClickHandler (ev) {
-    // TODO-code-challenge: Bonus: As a User, I can remove a workshop from my preferred workshops list
+    console.log('remove like');
+    if (this.props.preferred) {
+      fetch (`http://localhost:3000/api/v1/users/workshops/liked/${this.props.id}`, { headers: {Authorization: `Bearer ${localStorage.getItem('token')}`}, method: 'DELETE' })
+      .then ( (resp) => {
+        if (resp.status === 200) {
+          console.log ('Workshop Item removed from preferred workshops !');
+          this.props.selfUnmount(this.props.id);
+        }
+        else {
+          console.log(`Status returned ${resp.status}`); }
+        } )
+      .catch( (err) => {
+        console.error(err);
+      } );
+    }
   }
 
   render() {

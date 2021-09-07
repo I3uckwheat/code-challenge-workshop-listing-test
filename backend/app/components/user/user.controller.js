@@ -59,6 +59,8 @@ exports.signInHandler = (req, resp) => {
 
 
 exports.getLikedHandler = async (req, resp) => {
+  // Briggs: Dear reviewer for code-test, I opted to handle this in the workshop.controller 
+
   // TODO-code-challenge: Bonus: As a User, I can display the list of preferred workshops
   // See userService.getLikedWorkshops
   resp.status(200).json([]);
@@ -78,12 +80,24 @@ exports.addToLikedHandler = async (req, resp) => {
   } else {
     resp.status(500).json();
   }
-
 };
 
 
 exports.removeFromLikedHandler = async (req, resp) => {
-  // TODO-code-challenge: Bonus: As a User, I can remove a workshop from my preferred workshops list
+  let idWorkshop = req.params.id;
+  let idUser = req.token.id;
+  winston.debug(`Removing workshop ${idWorkshop} from liked list of user ${idUser}`);
+
+  let workshop = await workshopService.getById(idWorkshop);
+  if (workshop === false || workshop === null) {
+    resp.status(500).json();
+  }
+
+  if (await userService.unlikeWorkshop(idUser, workshop) ) {
+    resp.status(200).json();
+  } else {
+    resp.status(500).json();
+  }
   resp.status(200).json();
 };
 
