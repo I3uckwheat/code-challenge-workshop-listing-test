@@ -10,7 +10,8 @@ class WorkshopDisplay extends Component {
     super(props);
 
     this.state = {
-      data: []
+      data: [],
+
     };
 
     this.handleItemUnmount = this.handleItemUnmount.bind(this);
@@ -69,9 +70,44 @@ class WorkshopDisplay extends Component {
     });
   }
 
-  refreshWorkshops (mode) {
-    let url = "";
 
+  fetchNearby() {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition( (position) => {
+        console.log(position.coords.longitude, position.coords.latitude);
+        const url = `http://localhost:3000/api/v1/workshops/nearby?x=${position.coords.longitude}&y=${position.coords.latitude}`;
+        this.fetchWorkshops(url);
+      }, (err) => {
+        console.log('No permission for geolocation.');
+        const url = `http://localhost:3000/api/v1/workshops/nearby`;
+        this.fetchWorkshops(url);
+      });
+    } else {
+      console.log("Geolocation is not supported.");
+      const url = `http://localhost:3000/api/v1/workshops/nearby`;
+      this.fetchWorkshops(url);
+    }
+  }
+
+  fetchPreferred() {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition( (position) => {
+        console.log(position.coords.longitude, position.coords.latitude);
+        const url = `http://localhost:3000/api/v1/workshops/preferred?x=${position.coords.longitude}&y=${position.coords.latitude}`;
+        this.fetchWorkshops(url);
+      }, (err) => {
+        console.log('No permission for geolocation.');
+        const url = `http://localhost:3000/api/v1/workshops/preferred`;
+        this.fetchWorkshops(url);
+      });
+    } else {
+      console.log("Geolocation is not supported.");
+      const url = `http://localhost:3000/api/v1/workshops/preferred`;
+      this.fetchWorkshops(url);
+    }
+  }
+
+  refreshWorkshops (mode) {
     if (!localStorage.getItem('token')) {
       this.props.history.push('/signin');
     }
@@ -80,42 +116,12 @@ class WorkshopDisplay extends Component {
       console.log('nearby');
       // Emptying data to prevent flashing
       this.setState({mode: "nearby", data: []});
-
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition( (position) => {
-          console.log(position.coords.longitude, position.coords.latitude);
-          url = `http://localhost:3000/api/v1/workshops/nearby?x=${position.coords.longitude}&y=${position.coords.latitude}`;
-          this.fetchWorkshops(url);
-        }, (err) => {
-          console.log('No permission for geolocation.');
-          url = `http://localhost:3000/api/v1/workshops/nearby`;
-          this.fetchWorkshops(url);
-        });
-      } else {
-        console.log("Geolocation is not supported.");
-        url = `http://localhost:3000/api/v1/workshops/nearby`;
-        this.fetchWorkshops(url);
-      }
+      this.fetchNearby();
 
     } else if (mode === '/workshops/preferred') {
       // Emptying data to prevent flashing
       this.setState({mode: "preferred", data: []});
-
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition( (position) => {
-          console.log(position.coords.longitude, position.coords.latitude);
-          url = `http://localhost:3000/api/v1/workshops/preferred?x=${position.coords.longitude}&y=${position.coords.latitude}`;
-          this.fetchWorkshops(url);
-        }, (err) => {
-          console.log('No permission for geolocation.');
-          url = `http://localhost:3000/api/v1/workshops/preferred`;
-          this.fetchWorkshops(url);
-        });
-      } else {
-        console.log("Geolocation is not supported.");
-        url = `http://localhost:3000/api/v1/workshops/preferred`;
-        this.fetchWorkshops(url);
-      }
+      this.fetchPreferred();
     } else {
       this.props.history.push('/workshops/nearby');
     }
