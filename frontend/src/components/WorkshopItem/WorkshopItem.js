@@ -27,7 +27,21 @@ class WorkshopItem extends Component {
   }
 
   dislikeClickHandler (ev) {
-    // TODO-code-challenge: Bonus: As a User, I can dislike a workshop, so it won’t be displayed within “Nearby WorkShops” list during the next 2 hours
+    console.log('dislike');
+    if (!this.props.preferred) {
+      fetch (`http://localhost:3000/api/v1/users/workshops/disliked/${this.props.id}`, { headers: {Authorization: `Bearer ${localStorage.getItem('token')}`}, method: 'POST' })
+      .then ( (resp) => {
+        if (resp.status === 200) {
+          console.log ('Workshop Item added to disliked workshops !');
+          this.props.selfUnmount(this.props.id);
+        }
+        else {
+          console.log(`Status returned ${resp.status}`); }
+        } )
+      .catch( (err) => {
+        console.error(err);
+      } );
+    }
   }
 
   removeClickHandler (ev) {

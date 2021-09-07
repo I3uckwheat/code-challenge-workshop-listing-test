@@ -88,6 +88,19 @@ exports.removeFromLikedHandler = async (req, resp) => {
 };
 
 exports.addToDislikedHandler = async (req, resp) => {
-  // TODO-code-challenge: Bonus: As a User, I can dislike a workshop, so it won’t be displayed within “Nearby WorkShops” list during the next 2 hours
+  let idWorkshop = req.params.id;
+  let idUser = req.token.id;
+  winston.debug(`Adding workshop ${idWorkshop} to disliked list of user ${idUser}`);
+
+  let workshop = await workshopService.getById(idWorkshop);
+  if (workshop === false || workshop === null) {
+    resp.status(500).json();
+  }
+
+  if (await userService.dislikeWorkshop(idUser, workshop) ) {
+    resp.status(200).json();
+  } else {
+    resp.status(500).json();
+  }
   resp.status(200).json();
 };

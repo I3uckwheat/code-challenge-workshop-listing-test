@@ -101,5 +101,25 @@ exports.unlikeWorkshop = async (idUser, workshop) => {
 };
 
 exports.dislikeWorkshop = async (idUser, workshop) => {
-  // TODO-code-challenge: Bonus: As a User, I can dislike a workshop, so it won’t be displayed within “Nearby WorkShops” list during the next 2 hours
+  winston.debug(`User Service : Disliking workshop ${workshop.name} by user ${idUser}`);
+
+  try {
+    let user = await User.findById(idUser);
+
+    // Prevent record from being duplicated if already existing on user
+    // Update time if already disliked
+    const hasDisliked = user.dislikedWorkshops.find((dislikedWorkshop) => dislikedWorkshop._id.equals(workshop._id));
+    if(!hasDisliked) {
+      user.dislikedWorkshops.push(workshop._id);
+    } else {
+      hasDisliked.dislikedTime = new Date();
+    }
+
+    await user.save();
+    return true;
+  } catch (err) {
+    winston.error(`User Service: Error in disliking workshop ${workshop._id} by user ${idUser}`);
+    winston.debug(err);
+    return false;
+  }
 };
