@@ -53,7 +53,7 @@ exports.getNearby = async (id, longitude, latitude) => {
         if (workshop._id.equals(specialWorkshop._id)) {
           if (specialWorkshop.likedTime) {
             return {...workshop.toObject(), preferred: true};
-          } else if (sp.dislikedTime) {
+          } else if (specialWorkshop.dislikedTime) {
           //   // TODO-code-challenge: Bonus: As a User, I can dislike a workshop, so it won’t be displayed within “Nearby WorkShops” list during the next 2 hours
           }
         }

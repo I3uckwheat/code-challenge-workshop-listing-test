@@ -14,6 +14,8 @@ class WorkshopDisplay extends Component {
       data: []
     };
 
+    this.handleItemUnmount = this.handleItemUnmount.bind(this);
+
     let unlisten = this.props.history.listen((location, action) => {
       console.log('history refresh');
       if (location.pathname.includes('preferred') || location.pathname.includes('nearby')) {
@@ -46,11 +48,9 @@ class WorkshopDisplay extends Component {
 
   handleItemUnmount (id) {
     console.log(`Removing item ${id}`);
-    let res = this.state.data.filter (item => {
-      return item.props.id !== id;
-    });
+    let res = this.state.data.filter(item => item._id !== id);
+
     this.setState({
-      ...this.state,
       data: res
     })
   }
@@ -116,10 +116,12 @@ class WorkshopDisplay extends Component {
             this.state.data.map(workshop => (
               !workshop.preferred &&
               <WorkshopItem 
+                key={workshop._id}
                 name={workshop.name}
                 img={workshop.picture}
                 id={workshop._id}
                 preferred={workshop.preferred}
+                selfUnmount={this.handleItemUnmount}
               />
             ))
           }
