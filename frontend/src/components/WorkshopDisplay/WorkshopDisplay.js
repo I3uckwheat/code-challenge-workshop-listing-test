@@ -56,8 +56,6 @@ class WorkshopDisplay extends Component {
   }
 
   fetchWorkshops (url) {
-    let workshops = [];
-    let isPreferred = !url.includes('nearby');
     fetch(url, {
       method: 'GET',
       headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
@@ -81,6 +79,7 @@ class WorkshopDisplay extends Component {
 
     if (mode === '/workshops/nearby') {
       console.log('nearby');
+      this.setState({mode: "nearby"});
 
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition( (position) => {
@@ -99,6 +98,8 @@ class WorkshopDisplay extends Component {
       }
 
     } else if (mode === '/workshops/preferred') {
+      this.setState({mode: "preferred"});
+
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition( (position) => {
           console.log(position.coords.longitude, position.coords.latitude);
@@ -128,7 +129,7 @@ class WorkshopDisplay extends Component {
         <div>
           { 
             this.state.data.map(workshop => (
-              !workshop.preferred &&
+              (!workshop.preferred || this.state.mode === "preferred") &&
               !workshop.disliked &&
               <WorkshopItem 
                 key={workshop._id}

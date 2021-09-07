@@ -78,10 +78,12 @@ exports.getPreferred = async (id, longitude, latitude) => {
   try {
     winston.debug('Workshop service getting preferred workshops');
     // If coordinates are not specified just get the workshops as they are from the DB
+    let workshops;
+
     let likedWorkshopIds = (await userService.getLikedWorkshops(id)).map(workshop => workshop._id);
 
     if (longitude && latitude) {
-      return await Workshop.find({
+      workshops = await Workshop.find({
         _id: {"$in": likedWorkshopIds},
         location: {
           // $near operator sorts results by distance: https://docs.mongodb.com/manual/reference/operator/query/near
@@ -94,10 +96,12 @@ exports.getPreferred = async (id, longitude, latitude) => {
         }
       }).exec();
     } else {
-     return await Workshop.find({
+     workshops = await Workshop.find({
         _id: {"in": likedWorkshopIds}
       });
     }
+
+    return workshops.map(workshop => ({...workshop.toObject(), preferred: true}));
   } catch (err) {
     winston.error('Workshop service Error: could not get nearby workshops');
     winston.debug(err);
