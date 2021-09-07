@@ -79,7 +79,7 @@ class WorkshopDisplay extends Component {
 
     if (mode === '/workshops/nearby') {
       console.log('nearby');
-      this.setState({mode: "nearby"});
+      this.setState({mode: "nearby", data: []});
 
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition( (position) => {
@@ -98,7 +98,7 @@ class WorkshopDisplay extends Component {
       }
 
     } else if (mode === '/workshops/preferred') {
-      this.setState({mode: "preferred"});
+      this.setState({mode: "preferred", data: []});
 
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition( (position) => {
@@ -124,7 +124,7 @@ class WorkshopDisplay extends Component {
     return (
       <div className="WorkshopDisplay">
         <div>
-          <h1 className="title">Nearby Workshops</h1>
+          <h1 className="title">{this.state.mode === "nearby" ? "Nearby Workshops" : "Preferred Workshops"}</h1>
         </div>
         <div>
           { 
