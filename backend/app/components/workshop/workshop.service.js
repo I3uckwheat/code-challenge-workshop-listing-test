@@ -54,7 +54,14 @@ exports.getNearby = async (id, longitude, latitude) => {
           if (specialWorkshop.likedTime) {
             return {...workshop.toObject(), preferred: true};
           } else if (specialWorkshop.dislikedTime) {
-          //   // TODO-code-challenge: Bonus: As a User, I can dislike a workshop, so it won’t be displayed within “Nearby WorkShops” list during the next 2 hours
+            const twoHoursAgo = new Date();
+
+            // Decrement now by 2 hours, JS date objects properly handle setting hours this way: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/setHours
+            twoHoursAgo.setHours(twoHoursAgo.getHours() - 2);
+
+            if(specialWorkshop.dislikedTime > twoHoursAgo) {
+              return {...workshop.toObject(), disliked: true};
+            }
           }
         }
       }

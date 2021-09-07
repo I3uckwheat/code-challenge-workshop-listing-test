@@ -115,6 +115,7 @@ class WorkshopDisplay extends Component {
           { 
             this.state.data.map(workshop => (
               !workshop.preferred &&
+              !workshop.disliked &&
               <WorkshopItem 
                 key={workshop._id}
                 name={workshop.name}
